@@ -41,7 +41,6 @@ jobs:
         changelog="${MY_STRING//$'\n'/'%0A'}"
         changelog="${MY_STRING//$'\r'/'%0D'}"
         echo "::set-output name=changelog::$changelog"
-      run: echo "${{ steps.get_changelog.outputs.changelog }}"
     - name: Run Make
       run: make all tar
     - name: Create Release
