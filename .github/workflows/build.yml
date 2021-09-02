@@ -37,10 +37,10 @@ jobs:
       id: get_changelog
       run: |
         changelog=$(cat Changelog.md | grep -oPz '(?s)### ${{ steps.bump_version.outputs.ytdlp_version }}.*?\n\n\n')
-        echo "changelog<<EOF" >> $GITHUB_ENV
-        echo "$changelog" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-    - name: print changelog
+        changelog="${MY_STRING//'%'/'%25'}"
+        changelog="${MY_STRING//$'\n'/'%0A'}"
+        changelog="${MY_STRING//$'\r'/'%0D'}"
+        echo "::set-output name=changelog::$changelog"
       run: echo "${{ steps.get_changelog.outputs.changelog }}"
     - name: Run Make
       run: make all tar
@@ -54,7 +54,7 @@ jobs:
         release_name: yt-dlp ${{ steps.bump_version.outputs.ytdlp_version }} 5
         body: |
           Changelog:
-          ${{ env.changelog }}
+          ${{ steps.get_changelog.outputs.changelog }}
         draft: false
         prerelease: false
     - name: Upload yt-dlp Unix binary
